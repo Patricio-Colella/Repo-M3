@@ -1,3 +1,5 @@
-const { server } = require('./server.js');
+const { posts,server } = require('./server.js');
+
+
 
 server.listen(3000);
