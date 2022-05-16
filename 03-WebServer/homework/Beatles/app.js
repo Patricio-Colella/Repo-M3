@@ -22,3 +22,55 @@ var beatles=[{
   profilePic:"http://cp91279.biography.com/BIO_Bio-Shorts_0_Ringo-Starr_SF_HD_768x432-16x9.jpg"
 }
 ]
+
+http.createServer(function(req,res){
+  url=req.url.toLowerCase()
+  if(req.url==="/"){
+    res.writeHead(200, { 'Content-Type':'text/html' })
+	  var html = fs.readFileSync(__dirname +'/index.html');
+  	res.end(html);
+  }
+  
+  if(url==="/john%20lennon"||url==="/paul%20mccartney"||url==="/george%20harrison"||url==="/richard%20starkey"){
+    res.writeHead(200, { 'Content-Type':'text/html' })
+	  var html = fs.readFileSync(__dirname +'/beatle.html',"utf-8");
+     beatles.forEach(beatle => {
+        var aux=beatle.name
+        aux=aux.toLowerCase()
+        aux=aux.replace(" ","%20")
+        aux="/"+aux
+         if(url===aux){
+           html=html.replace(`{name}`,beatle.name)
+           html=html.replace("{fecha}",beatle.birthdate)
+           html=html.replace("{img}",beatle.profilePic)
+         }       
+     });
+     res.end(html);
+  }
+
+  if(req.url==="/api"){
+    res.writeHead(200, { 'Content-Type':'application/json' })
+	  res.end( JSON.stringify(beatles) )                
+  }
+
+  if(url==="/api/jhon%20lennon"||url==="/api/paul%20mccartney"||url==="/api/george%20harrison"||url==="/api/richard%20starkey"){
+    res.writeHead(200, { 'Content-Type':'application/json' })
+    var response;
+    beatles.forEach(beatle => {
+      var aux=beatle.name
+      aux=aux.toLowerCase()
+       aux=aux.replace(" ","%20")
+       aux="/api/"+aux
+       if(aux===url)
+	     response= JSON.stringify(beatle) 
+     });
+     res.end(response)
+  }
+
+  else{
+        res.writeHead(404, { 'Content-Type':'text/plain' })
+        res.end(); 
+  }
+
+}).listen( 1337, '127.0.0.1' )
+
